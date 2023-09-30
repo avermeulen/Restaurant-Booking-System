@@ -1,8 +1,9 @@
 import express from "express";
-import pgp from "pg-promise";
 import exphbs from "express-handlebars";
 import bodyParser from "body-parser";
 import flash from "flash-express";
+import RestaurantTableBooking from "./services/restaurant.js";
+import pgPromise from 'pg-promise';
 
 const app = express()
 
@@ -21,9 +22,14 @@ const handlebarSetup = exphbs.engine({
 app.engine('handlebars', handlebarSetup);
 app.set('view engine', 'handlebars');
 
-app.get("/", (req, res) => {
+const DATABASE_URL= process.env.DATABASE_URL || "postgresql://coder:coder123@localhost:5432/bookings";
+const connectionString = DATABASE_URL;
+const db = pgPromise()(connectionString);
+const restaurantTableBooking = await RestaurantTableBooking(db);
 
-    res.render('index', { tables : [{}, {}, {booked : true}, {}, {}, {}]})
+app.get("/", async (req, res) => {
+    const tables = await restaurantTableBooking.getTables();
+    res.render('index', { tables })
 });
 
 

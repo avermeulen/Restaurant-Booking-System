@@ -2,6 +2,8 @@ const restaurant = (db) => {
 
     async function getTables() {
         // get all the available tables
+        const tables = await db.manyOrNone(`select * from table_booking order by id asc`);
+        return tables;
     }
 
     async function bookTable(tableName) {
@@ -30,7 +32,7 @@ const restaurant = (db) => {
         getBookedTables,
         isTableBooked,
         cancelTableBooking,
-        editTableBooking,
+        // editTableBooking,
         getBookedTablesForUser
     }
 }
